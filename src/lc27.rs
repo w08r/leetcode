@@ -27,7 +27,7 @@ impl Solution {
             if p1 == nums.len() {
                 break;
             }
-            // p1 points to val
+            // p1 points to val, search (using p2) for a non-val
             if p2 == 0 {
                 p2 = p1 + 1;
             }
@@ -37,6 +37,7 @@ impl Solution {
             if p2 == nums.len() {
                 break;
             } else {
+                // p2 points to a non-val value, swap with p1
                 nums.swap(p1, p2);
             }
         }
