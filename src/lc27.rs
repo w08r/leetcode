@@ -28,17 +28,16 @@ impl Solution {
                 break;
             }
             // p1 points to val
-            p2 = p1 + 1;
+            if p2 == 0 {
+                p2 = p1 + 1;
+            }
             while p2 < nums.len() && nums[p2] == val {
                 p2 += 1;
             }
             if p2 == nums.len() {
                 break;
             } else {
-                // swap
-                let t = nums[p1];
-                nums[p1] = nums[p2];
-                nums[p2] = t;
+                nums.swap(p1, p2);
             }
         }
         nums.resize(p1, val);
@@ -70,11 +69,11 @@ mod tests {
 
     #[test]
     fn test_leet_1() {
-        run_test(&[3,2,2,3], 3, 2, &[2, 2]);
+        run_test(&[3, 2, 2, 3], 3, 2, &[2, 2]);
     }
 
     #[test]
     fn test_leet_2() {
-        run_test(&[0,1,2,2,3,0,4,2], 2, 5, &[0,1,3,0,4]);
+        run_test(&[0, 1, 2, 2, 3, 0, 4, 2], 2, 5, &[0, 1, 3, 0, 4]);
     }
 }

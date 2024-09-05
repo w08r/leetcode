@@ -19,14 +19,16 @@
           devShells = rec {
             default = nixpkgs.legacyPackages.${system}.mkShell {
               nativeBuildInputs = [ p.pkg-config ];
-              packages = with p; [ rustc
-                           cargo
-                           rust-analyzer
-                           clippy
-                           lldb
-                           iconv
-                           gnuplot
-                         ];
+              packages = with p; [
+                cargo
+                clippy
+                gnuplot
+                iconv
+                lldb
+                rust-analyzer
+                rustc
+                rustfmt
+              ];
             };
           };
         }

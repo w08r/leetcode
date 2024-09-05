@@ -10,7 +10,6 @@
 // elements that should be merged, and the last n elements are set to
 // 0 and should be ignored. nums2 has a length of n.
 
-
 #[allow(dead_code)]
 pub struct Solution {}
 
@@ -24,27 +23,27 @@ pub struct Solution {}
 
 struct ReverseIterator {
     complete: bool,
-    e: usize
+    e: usize,
 }
 
 impl ReverseIterator {
     pub fn new(ilen: i32) -> ReverseIterator {
         let len = usize::try_from(ilen).unwrap();
         if len > 0 {
-            return ReverseIterator {
+            ReverseIterator {
                 complete: false,
-                e: len - 1
-            };
+                e: len - 1,
+            }
         } else {
             // empty
-            return ReverseIterator {
+            ReverseIterator {
                 complete: true,
-                e: 0
-            };
+                e: 0,
+            }
         }
     }
     pub fn has_next(&self) -> bool {
-        return !self.complete;
+        !self.complete
     }
     pub fn next(&mut self) -> usize {
         if self.complete {
@@ -56,15 +55,15 @@ impl ReverseIterator {
         } else {
             self.e -= 1;
         }
-        return rv;
+        rv
     }
     pub fn peek(&mut self) -> usize {
-        return self.e;
+        self.e
     }
 }
 
 impl Solution {
-    pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32){
+    pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
         let mut n1_iter = ReverseIterator::new(m);
         let mut n2_iter = ReverseIterator::new(n);
 
@@ -74,14 +73,10 @@ impl Solution {
             cur -= 1;
             if !n1_iter.has_next() {
                 nums1[cur] = nums2[n2_iter.next()];
-            } else if !n2_iter.has_next() {
+            } else if !n2_iter.has_next() || nums1[n1_iter.peek()] >= nums2[n2_iter.peek()] {
                 nums1[cur] = nums1[n1_iter.next()];
             } else {
-                if nums1[n1_iter.peek()] >= nums2[n2_iter.peek()] {
-                    nums1[cur] = nums1[n1_iter.next()];
-                } else {
-                    nums1[cur] = nums2[n2_iter.next()];
-                }
+                nums1[cur] = nums2[n2_iter.next()];
             }
         }
     }
