@@ -28,7 +28,7 @@ struct ReverseIterator {
 
 impl ReverseIterator {
     pub fn new(ilen: i32) -> ReverseIterator {
-        let len = usize::try_from(ilen).unwrap();
+        let len = ilen as usize;
         if len > 0 {
             ReverseIterator {
                 complete: false,
@@ -89,7 +89,7 @@ mod tests {
     fn run_test(n1: &[i32], m: i32, n2: &[i32], ex: &[i32]) {
         let mut v1 = Vec::from(n1);
         let mut v2 = Vec::from(n2);
-        let n = i32::try_from(v2.len()).unwrap();
+        let n = v2.len() as i32;
         Solution::merge(&mut v1, m, &mut v2, n);
         assert_eq!(v1, ex);
     }

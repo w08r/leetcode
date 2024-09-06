@@ -19,30 +19,13 @@ impl Solution {
         // use 2 pointer apporach to move the non-`vals` to the
         // beginning and then chop off the end
         let mut p1 = 0_usize;
-        let mut p2 = 0_usize;
-        loop {
-            while p1 < nums.len() && nums[p1] != val {
+        for p2 in 0..nums.len() {
+            if nums[p2] != val {
+                nums[p1] = nums[p2];
                 p1 += 1;
             }
-            if p1 == nums.len() {
-                break;
-            }
-            // p1 points to val, search (using p2) for a non-val
-            if p2 == 0 {
-                p2 = p1 + 1;
-            }
-            while p2 < nums.len() && nums[p2] == val {
-                p2 += 1;
-            }
-            if p2 == nums.len() {
-                break;
-            } else {
-                // p2 points to a non-val value, swap with p1
-                nums.swap(p1, p2);
-            }
         }
-        nums.resize(p1, val);
-        nums.len().try_into().unwrap()
+        p1 as i32
     }
 }
 
@@ -53,7 +36,9 @@ mod tests {
     fn run_test(nums: &[i32], val: i32, ex: i32, ex_out: &[i32]) {
         let mut n = Vec::from(nums);
         let r = Solution::remove_element(&mut n, val);
-        assert_eq!(n, ex_out);
+        let mut ex_truncated = Vec::from(n);
+        ex_truncated.resize(r as usize, 0);
+        assert_eq!(ex_out, ex_truncated);
         assert_eq!(r, ex);
     }
 

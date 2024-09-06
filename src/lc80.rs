@@ -1,16 +1,21 @@
 // Given an integer array nums sorted in non-decreasing order, remove
-// the duplicates in-place such that each unique element appears only
-// once. The relative order of the elements should be kept the
-// same. Then return the number of unique elements in nums.
+// some duplicates in-place such that each unique element appears at
+// most twice. The relative order of the elements should be kept the
+// same.
 
-// Consider the number of unique elements of nums to be k, to get
-// accepted, you need to do the following things:
+// Since it is impossible to change the length of the array in some
+// languages, you must instead have the result be placed in the first
+// part of the array nums. More formally, if there are k elements
+// after removing the duplicates, then the first k elements of nums
+// should hold the final result. It does not matter what you leave
+// beyond the first k elements.
 
-// - Change the array nums such that the first k elements of nums
-//   contain the unique elements in the order they were present in nums
-//   initially. The remaining elements of nums are not important as well
-//   as the size of nums.
-// - Return k.
+// Return k after placing the final result in the first k slots of
+// nums.
+
+// Do not allocate extra space for another array. You must do this by
+// modifying the input array in-place with O(1) extra memory.
+
 
 #[allow(dead_code)]
 pub struct Solution {}
@@ -27,6 +32,10 @@ impl Solution {
         let mut cur = nums[writer];
         writer += 1;
 
+        if writer < nums.len() && nums[0] == nums[1] {
+            writer += 1;
+        }
+
         while reader < nums.len() && writer < nums.len() {
             // find the next number
             while reader < nums.len() && nums[reader] == cur {
@@ -37,6 +46,14 @@ impl Solution {
                 nums[writer] = nums[reader];
                 cur = nums[writer];
                 writer += 1;
+
+                // if the next number is the same, add it
+                if (reader+1) < nums.len() && cur == nums[reader+1] {
+                    reader += 1;
+                    nums[writer] = nums[reader];
+                    cur = nums[writer];
+                    writer += 1;
+                }
             }
         }
         dbg!(&nums);
@@ -68,11 +85,11 @@ mod tests {
 
     #[test]
     fn test_leet_1() {
-        run_test(&[1, 1, 2], 2, &[1, 2]);
+        run_test(&[1, 1, 1, 2, 2, 3], 5, &[1, 1, 2, 2, 3]);
     }
 
     #[test]
     fn test_leet_2() {
-        run_test(&[0, 0, 1, 1, 1, 2, 2, 3, 3, 4], 5, &[0, 1, 2, 3, 4]);
+        run_test(&[0, 0, 1, 1, 1, 1, 2, 3, 3], 7, &[0, 0, 1, 1, 2, 3, 3]);
     }
 }
