@@ -56,7 +56,6 @@ impl Solution {
                 }
             }
         }
-        dbg!(&nums);
         nums.resize(writer, 0);
         writer as i32
     }

@@ -39,7 +39,6 @@ impl Solution {
                 writer += 1;
             }
         }
-        dbg!(&nums);
         nums.resize(writer, 0);
         writer as i32
     }
