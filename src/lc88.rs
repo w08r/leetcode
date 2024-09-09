@@ -10,6 +10,8 @@
 // elements that should be merged, and the last n elements are set to
 // 0 and should be ignored. nums2 has a length of n.
 
+use std::{cell::RefCell, rc::Rc};
+
 #[allow(dead_code)]
 pub struct Solution {}
 
@@ -18,66 +20,88 @@ pub struct Solution {}
 // at which point `has_next` will be false.
 //
 // Understands the semantics of the vectors used in this leet such
-// that it will start from the middle of the first vector (at `m`)
-// and the end of the second vecotr.
+// that it can start from the middle of the first vector (at `m`) and
+// the end of the second vecotr.  Allows a reverse output iterator to
+// be used to write the current highest value.
 
-struct ReverseIterator {
+struct ReverseIterator<'a> {
+    nums: Rc<RefCell<& 'a mut Vec<i32>>>,
     complete: bool,
     e: usize,
 }
 
-impl ReverseIterator {
-    pub fn new(ilen: i32) -> ReverseIterator {
-        let len = ilen as usize;
+impl <'a> Iterator for ReverseIterator<'a> {
+    type Item = i32;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.complete {
+            None
+        } else {
+            let rv = self.nums.borrow()[self.e];
+            if self.e == 0 {
+                self.complete = true;
+            } else {
+                self.e -= 1;
+            }
+            Some(rv)
+        }
+    }
+}
+
+impl <'a> ReverseIterator<'a> {
+    pub fn new(v: &Rc<RefCell<& 'a mut Vec<i32>>>, l: i32) -> ReverseIterator<'a> {
+        let len = l as usize;
         if len > 0 {
             ReverseIterator {
+                nums: v.clone(),
                 complete: false,
-                e: len - 1,
+                e: len - 1, // index into the vector
             }
         } else {
             // empty
             ReverseIterator {
+                nums: v.clone(),
                 complete: true,
                 e: 0,
             }
         }
     }
-    pub fn has_next(&self) -> bool {
-        !self.complete
-    }
-    pub fn next(&mut self) -> usize {
-        if self.complete {
-            panic!("Can't pop from empty vector")
-        }
-        let rv = self.e;
-        if self.e == 0 {
-            self.complete = true;
-        } else {
-            self.e -= 1;
-        }
-        rv
-    }
-    pub fn peek(&mut self) -> usize {
-        self.e
+
+    pub fn set(&mut self, val: i32) {
+        self.nums.borrow_mut()[self.e] = val
     }
 }
 
 impl Solution {
     pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
-        let mut n1_iter = ReverseIterator::new(m);
-        let mut n2_iter = ReverseIterator::new(n);
+        let r1 = Rc::new(RefCell::new(nums1));
+        let r2 = Rc::new(RefCell::new(nums2));
 
-        let mut cur = nums1.len();
+        // 2 iterators walk backwards reading from nums1 and nums2
+        // whilst the output iterator walks backwards writing to nums1
+        let mut n1_iter = ReverseIterator::new(&r1, m);
+        let mut n2_iter = ReverseIterator::new(&r2, n);
+        // start output at the end, m+n
+        let mut out_iter = ReverseIterator::new(&r1, m+n);
 
-        while n1_iter.has_next() || n2_iter.has_next() {
-            cur -= 1;
-            if !n1_iter.has_next() {
-                nums1[cur] = nums2[n2_iter.next()];
-            } else if !n2_iter.has_next() || nums1[n1_iter.peek()] >= nums2[n2_iter.peek()] {
-                nums1[cur] = nums1[n1_iter.next()];
-            } else {
-                nums1[cur] = nums2[n2_iter.next()];
+        let mut n1 = n1_iter.next();
+        let mut n2 = n2_iter.next();
+        loop {
+            match (n1, n2) {
+                (Some(a), Some(b)) if a >= b => {
+                    out_iter.set(a);
+                    n1 = n1_iter.next();
+                }
+                (Some(a), None) => {
+                    out_iter.set(a);
+                    n1 = n1_iter.next();
+                }
+                (_, Some(b)) => {
+                    out_iter.set(b);
+                    n2 = n2_iter.next();
+                }
+                _ => break
             }
+            out_iter.next();
         }
     }
 }

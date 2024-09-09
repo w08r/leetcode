@@ -24,7 +24,7 @@
                 clippy
                 gnuplot
                 iconv
-                lldb
+                lldb_18
                 rust-analyzer
                 rustc
                 rustfmt
