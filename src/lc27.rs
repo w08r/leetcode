@@ -15,6 +15,7 @@
 pub struct Solution {}
 
 impl Solution {
+    #![allow(clippy::ptr_arg)]
     pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
         // use 2 pointer apporach to move the non-`vals` to the
         // beginning and then chop off the end
