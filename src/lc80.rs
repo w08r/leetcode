@@ -29,9 +29,8 @@ impl Solution {
         let mut writer = 1_usize;
 
         for reader in 2..nums.len() {
-            if nums[reader] == nums[writer] &&
-                nums[reader] == nums[writer-1] {
-            } else {
+            if nums[reader] != nums[writer] ||
+                nums[reader] != nums[writer-1] {
                 writer += 1;
                 nums[writer] = nums[reader];
             }

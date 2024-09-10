@@ -17,30 +17,19 @@ pub struct Solution {}
 
 impl Solution {
     pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
-        let mut writer = 0_usize;
-        let mut reader = writer;
-
         if nums.is_empty() {
             return 0;
         }
 
-        let mut cur = nums[writer];
-        writer += 1;
-
-        while reader < nums.len() && writer < nums.len() {
-            // find the next number
-            while reader < nums.len() && nums[reader] == cur {
-                reader += 1;
-            }
-            // if we're not at the end, insert at writer pos
-            if reader < nums.len() {
-                nums[writer] = nums[reader];
-                cur = nums[writer];
+        let mut writer = 0_usize;
+        for reader in 1..nums.len() {
+            if nums[reader] != nums[writer] {
                 writer += 1;
+                nums[writer] = nums[reader];
             }
         }
-        nums.resize(writer, 0);
-        writer as i32
+        nums.resize(writer+1, 0);
+        nums.len() as i32
     }
 }
 
