@@ -36,7 +36,7 @@ mod tests {
     fn run_test(nums: &[i32], val: i32, ex: i32, ex_out: &[i32]) {
         let mut n = Vec::from(nums);
         let r = Solution::remove_element(&mut n, val);
-        let mut ex_truncated = Vec::from(n);
+        let mut ex_truncated = n.clone();
         ex_truncated.resize(r as usize, 0);
         assert_eq!(ex_out, ex_truncated);
         assert_eq!(r, ex);

@@ -22,42 +22,22 @@ pub struct Solution {}
 
 impl Solution {
     pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
-        let mut writer = 0_usize;
-        let mut reader = writer;
-
-        if nums.is_empty() {
-            return 0;
+        if nums.len() <= 1 {
+            return nums.len() as i32;
         }
 
-        let mut cur = nums[writer];
-        writer += 1;
+        let mut writer = 1_usize;
 
-        if writer < nums.len() && nums[0] == nums[1] {
-            writer += 1;
-        }
-
-        while reader < nums.len() && writer < nums.len() {
-            // find the next number
-            while reader < nums.len() && nums[reader] == cur {
-                reader += 1;
-            }
-            // if we're not at the end, insert at writer pos
-            if reader < nums.len() {
-                nums[writer] = nums[reader];
-                cur = nums[writer];
+        for reader in 2..nums.len() {
+            if nums[reader] == nums[writer] &&
+                nums[reader] == nums[writer-1] {
+            } else {
                 writer += 1;
-
-                // if the next number is the same, add it
-                if (reader+1) < nums.len() && cur == nums[reader+1] {
-                    reader += 1;
-                    nums[writer] = nums[reader];
-                    cur = nums[writer];
-                    writer += 1;
-                }
+                nums[writer] = nums[reader];
             }
         }
-        nums.resize(writer, 0);
-        writer as i32
+        nums.resize(writer+1, 0);
+        nums.len() as i32
     }
 }
 
@@ -68,8 +48,8 @@ mod tests {
     fn run_test(n1: &[i32], ex: i32, ex_arr: &[i32]) {
         let mut v1 = Vec::from(n1);
         let n = Solution::remove_duplicates(&mut v1);
-        assert_eq!(n, ex);
         assert_eq!(v1, ex_arr);
+        assert_eq!(n, ex);
     }
 
     #[test]
