@@ -8,45 +8,40 @@
 // Return the maximum profit you can achieve from this transaction. If
 // you cannot achieve any profit, return 0.
 
-use std::cmp;
-
-
 #[allow(dead_code)]
 pub struct Solution {}
 
-fn _diff(t: (i32, i32)) -> i32 {
-    t.1 - t.0
-}
+fn _max_profit(prices: &[i32]) -> i32 {
+    if prices.is_empty() {
+        return 0;
+    }
 
-fn _max_profit(prices: &[i32]) -> (i32,i32,i32,i32) {
-    return match prices.len() {
-        0 => panic!("logic error"),
-        1 => (prices[0],prices[0],prices[0],prices[0]),
-        2 if prices[0] < prices[1] => (prices[0],prices[1],prices[0],prices[1]),
-        2 => (prices[0],prices[1],prices[1],prices[0]),
-        _ => {
-            let lhs = _max_profit(&prices[0..prices.len()/2]);
-            let rhs = _max_profit(&prices[prices.len()/2..]);
-            let mut options = vec![
-                (lhs.0,lhs.1),
-                (lhs.0,rhs.0),
-                (lhs.0,rhs.1),
-                (lhs.1,rhs.0),
-                (lhs.1,rhs.1),
-                (rhs.0,rhs.1),
-                (lhs.2,rhs.3)
-            ];
-            options.sort_by(|b, a| (a.1-a.0).cmp(&(b.1-b.0)));
-            (options[0].0,options[0].1,cmp::min(lhs.2,rhs.2),cmp::max(lhs.3,rhs.3))
+    let mut max_profit = 0;
+    let mut current_min = prices[0];
+    let mut min_price = current_min;
+
+    for p in &prices[1..] {
+        if *p < current_min {
+            current_min = *p;
+        }
+        else {
+            let d = p - min_price;
+            if d > max_profit {
+                max_profit = d;
+            }
+            if p - current_min > max_profit {
+                min_price = current_min;
+                max_profit = d;
+            }
         }
     }
+    max_profit
 }
 
 impl Solution {
 
     pub fn max_profit(prices: Vec<i32>) -> i32 {
-        let (min, max,_, _) = _max_profit(&prices);
-        cmp::max(max - min, 0)
+        _max_profit(&prices)
     }
 }
 
